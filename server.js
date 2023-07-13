@@ -16,15 +16,19 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
     // Make sure you place body-parser before your CRUD handlers!
     app.use(bodyParser.urlencoded({ extended: true }))
+    app.use(express.static('public'))
+    app.use(bodyParser.json())
 
     // R -Read => Get
     app.get('/',(req,res) => {
       quotesCollection.find().toArray()
       .then(results =>{
         console.log(results);
+        //res.sendFile('/Users/Tertius/Desktop/100Devs/express/index.html')<=Moving away from .html to .ejs below
+        res.render('index.ejs', {quotes: results})
       })
       .catch(error => console.error(error))
-      res.sendFile('/Users/Tertius/Desktop/100Devs/express/index.html')
+      
     })
 
     // C -Create => Post 
@@ -34,6 +38,10 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
       res.redirect('/')
     })
     .catch(error => console.error(error))
+    })
+
+    app.put('/quotes', (req,res) =>{
+      console.log(req.body);
     })
 
    app.listen(3000, function () {
