@@ -23,7 +23,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     app.get('/',(req,res) => {
       quotesCollection.find().toArray()
       .then(results =>{
-        console.log(results);
+        //console.log(results);
         //res.sendFile('/Users/Tertius/Desktop/100Devs/express/index.html')<=Moving away from .html to .ejs below
         res.render('index.ejs', {quotes: results})
       })
@@ -40,9 +40,39 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     .catch(error => console.error(error))
     })
 
+      //U - Update
     app.put('/quotes', (req,res) =>{
-      console.log(req.body);
+      quotesCollection
+  .findOneAndUpdate(
+    { name: 'Yoda' },
+    {
+      $set: {
+        name: req.body.name,
+        quote: req.body.quote,
+      },
+    },
+    {
+      upsert: true,
+    }
+  )
+  .then(result => {
+    //console.log(result)
+    res.json('Success')
+  })
+  .catch(error => console.error(error))
     })
+
+
+  //D -delete 
+  app.delete('/quotes', (req, res) => {
+    quotesCollection
+      .deleteOne({ name: req.body.name })
+      .then(result => {
+        res.json(`Deleted Darth Vader's quote`)
+      })
+      .catch(error => console.error(error))
+  })
+
 
    app.listen(3000, function () {
     console.log('listening on 3000');
